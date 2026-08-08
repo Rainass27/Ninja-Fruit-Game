@@ -1,0 +1,15 @@
+{
+  "name": "wifi-fruit-ninja",
+  "version": "1.0.0",
+  "description": "Multiplayer-style interactive Fruit Ninja using local WiFi and WebSockets",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "localtunnel": "^2.0.2",
+    "selfsigned": "^5.5.0",
+    "socket.io": "^4.7.5"
+  }
+}
