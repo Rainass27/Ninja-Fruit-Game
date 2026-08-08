@@ -15,14 +15,14 @@ const io = new Server(server, {
   }
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Start Cloudflare Tunnel automatically if cloudflared.exe exists
+// Start Cloudflare Tunnel automatically if cloudflared.exe exists and we are on Windows
 const cloudflaredPath = path.join(__dirname, 'cloudflared.exe');
 let tunnelURL = null;
 let tunnelProcess = null;
 
-if (fs.existsSync(cloudflaredPath)) {
+if (process.platform === 'win32' && fs.existsSync(cloudflaredPath)) {
   console.log('Detected cloudflared.exe. Launching Cloudflare Tunnel...');
   tunnelProcess = exec(`"${cloudflaredPath}" tunnel --url http://localhost:${PORT}`);
 
