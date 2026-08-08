@@ -14,9 +14,9 @@ if (urlRoom) {
   window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
-// Connect to Socket.IO (route to Railway backend if on Vercel)
+// Connect to Socket.IO (route to Render backend if on Vercel)
 const socketUrl = window.location.hostname.includes('vercel.app')
-  ? 'https://fruit-ninja-backend-production.up.railway.app'
+  ? 'https://ninja-fruit-game-1.onrender.com'
   : '';
 socket = io(socketUrl, { transports: ['websocket'] });
 

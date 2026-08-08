@@ -8,7 +8,7 @@ if (roomId) {
 }
 
 const socketUrl = window.location.hostname.includes('vercel.app')
-  ? 'https://fruit-ninja-backend-production.up.railway.app'
+  ? 'https://ninja-fruit-game-1.onrender.com'
   : '';
 const socket = io(socketUrl, { transports: ['websocket'] });
 
