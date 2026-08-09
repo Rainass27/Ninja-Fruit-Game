@@ -233,43 +233,22 @@
     .hud-score-area {
       display: flex;
       flex-direction: column;
-      background: rgba(8, 8, 12, 0.65) !important;
-      padding: 12px 24px !important;
-      border-radius: 16px !important;
-      backdrop-filter: blur(10px) !important;
-    }
-
-    #hud-p1 {
-      border: 1px solid rgba(0, 242, 254, 0.25) !important;
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.08) !important;
-    }
-
-    #hud-p2 {
-      border: 1px solid rgba(255, 0, 127, 0.25) !important;
-      box-shadow: 0 0 20px rgba(255, 0, 127, 0.08) !important;
     }
 
     .hud-label {
-      font-size: 3.5rem !important;
-      font-weight: 900 !important;
-      color: #ffffff !important;
-      text-transform: uppercase !important;
-      letter-spacing: 1px !important;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      font-weight: 600;
     }
 
     .hud-value {
-      font-size: 3.5rem !important;
-      font-weight: 800 !important;
-      color: #ffffff !important;
-      line-height: 1.1 !important;
-    }
-
-    #hud-p1-label, #score-p1-val {
-      text-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe, 0 0 30px rgba(0, 242, 254, 0.5) !important;
-    }
-
-    #hud-p2-label, #score-p2-val {
-      text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 30px rgba(255, 0, 127, 0.5) !important;
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      line-height: 1.1;
     }
 
     .hud-combo {
@@ -343,12 +322,10 @@
   <div id="hud">
     <div class="hud-top" style="width: 100%; display: grid; grid-template-columns: 1fr 140px 1fr; align-items: start;">
       <!-- P1 scorecard (left side) -->
-      <div id="hud-p1" class="hud-score-area" style="text-align: left; background: rgba(8, 8, 12, 0.65); border: 1px solid rgba(0, 242, 254, 0.25); padding: 12px 24px; border-radius: 16px; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0, 242, 254, 0.08);">
-        <div style="display: flex; align-items: baseline; gap: 20px;">
-          <span class="hud-label" id="hud-p1-label" style="color: #fff; font-size: 3.5rem; font-weight: 900; text-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe; text-transform: uppercase;">Player 1</span>
-          <span id="score-p1-val" class="hud-value" style="color: #fff; text-shadow: 0 0 15px rgba(0, 242, 254, 0.8); font-size: 3.5rem; line-height: 1.1;">000</span>
-        </div>
-        <span id="combo-p1-val" class="hud-combo" style="color: var(--primary-neon);">3-FRUIT COMBO!</span>
+      <div id="hud-p1" class="hud-score-area" style="text-align: left;">
+        <span class="hud-label" id="hud-p1-label">Player 1</span>
+        <span id="score-p1-val" class="hud-value">000</span>
+        <span id="combo-p1-val" class="hud-combo">3-FRUIT COMBO!</span>
       </div>
 
       <!-- Center Area: Zen Timer -->
@@ -357,12 +334,10 @@
       </div>
 
       <!-- P2 scorecard (right side) -->
-      <div id="hud-p2" class="hud-score-area" style="text-align: right; display: none; background: rgba(8, 8, 12, 0.65); border: 1px solid rgba(255, 0, 127, 0.25); padding: 12px 24px; border-radius: 16px; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(255, 0, 127, 0.08);">
-        <div style="display: flex; align-items: baseline; gap: 20px; justify-content: flex-end;">
-          <span id="score-p2-val" class="hud-value" style="color: #fff; text-shadow: 0 0 15px rgba(255, 0, 127, 0.8); font-size: 3.5rem; line-height: 1.1;">000</span>
-          <span class="hud-label" id="hud-p2-label" style="color: #fff; font-size: 3.5rem; font-weight: 900; text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f; text-transform: uppercase;">Player 2</span>
-        </div>
-        <span id="combo-p2-val" class="hud-combo" style="color: var(--accent-neon);">3-FRUIT COMBO!</span>
+      <div id="hud-p2" class="hud-score-area" style="text-align: right; display: none;">
+        <span class="hud-label" id="hud-p2-label">Player 2</span>
+        <span id="score-p2-val" class="hud-value" style="color: var(--accent-neon);">000</span>
+        <span id="combo-p2-val" class="hud-combo" style="color: var(--primary-neon);">3-FRUIT COMBO!</span>
       </div>
     </div>
   </div>

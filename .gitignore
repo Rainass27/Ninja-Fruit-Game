@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.exe
+*.mp4
+whatsapp_video*
+WhatsApp Video*
+*.zip
+electron_err.log
+electron_run.log

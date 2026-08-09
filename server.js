@@ -15,36 +15,48 @@ const io = new Server(server, {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+// Global server port reference
+global.serverPort = 3000;
 
-// Start Cloudflare Tunnel automatically if cloudflared.exe exists and we are on Windows
-const cloudflaredPath = path.join(__dirname, 'cloudflared.exe');
 let tunnelURL = null;
 let tunnelProcess = null;
+global.tunnelProcess = null;
 
-if (process.platform === 'win32' && fs.existsSync(cloudflaredPath)) {
-  console.log('Detected cloudflared.exe. Launching Cloudflare Tunnel...');
-  tunnelProcess = exec(`"${cloudflaredPath}" tunnel --url http://localhost:${PORT}`);
+// Starts Cloudflare tunnel on target port
+function startTunnel(port) {
+  let cloudflaredPath = path.join(__dirname, 'cloudflared.exe');
+  if (cloudflaredPath.includes('app.asar')) {
+    cloudflaredPath = cloudflaredPath.replace('app.asar', 'app.asar.unpacked');
+  }
 
-  tunnelProcess.stderr.on('data', (data) => {
-    const output = data.toString();
-    const match = output.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
-    if (match && !tunnelURL) {
-      tunnelURL = match[0];
-      console.log(`\n======================================================`);
-      console.log(`Cloudflare Tunnel active!`);
-      console.log(`Tunnel URL (HTTPS): ${tunnelURL}`);
-      console.log(`======================================================\n`);
-      
-      // Notify any connected laptop display
-      io.emit('tunnel-status', { connectionURL: tunnelURL });
-    }
-  });
+  if (fs.existsSync(cloudflaredPath)) {
+    console.log(`Detected cloudflared.exe. Launching Cloudflare Tunnel on port ${port}...`);
+    global.tunnelProcess = exec(`"${cloudflaredPath}" tunnel --url http://localhost:${port}`);
+    tunnelProcess = global.tunnelProcess;
 
-  tunnelProcess.on('close', (code) => {
-    console.log(`Cloudflare Tunnel process exited with code ${code}`);
-    tunnelURL = null;
-  });
+    const handleTunnelOutput = (data) => {
+      const output = data.toString();
+      const match = output.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
+      if (match && !tunnelURL) {
+        tunnelURL = match[0];
+        console.log(`\n======================================================`);
+        console.log(`Cloudflare Tunnel active!`);
+        console.log(`Tunnel URL (HTTPS): ${tunnelURL}`);
+        console.log(`======================================================\n`);
+        
+        // Notify any connected laptop display
+        io.emit('tunnel-status', { connectionURL: tunnelURL });
+      }
+    };
+
+    tunnelProcess.stdout.on('data', handleTunnelOutput);
+    tunnelProcess.stderr.on('data', handleTunnelOutput);
+
+    tunnelProcess.on('close', (code) => {
+      console.log(`Cloudflare Tunnel process exited with code ${code}`);
+      tunnelURL = null;
+    });
+  }
 }
 
 // Clean up tunnel on exit
@@ -62,6 +74,12 @@ process.on('SIGTERM', () => {
     tunnelProcess.kill();
   }
   process.exit();
+});
+
+// Disable caching for all responses to force immediate updates in Electron
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  next();
 });
 
 // Serve static files from the 'public' directory
@@ -82,9 +100,46 @@ app.get('/game', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'game.html'));
 });
 
-// Helper function to find the local IP address on the network
+// Helper function to find the local IP address on the network, prioritizing physical adapters and filtering virtual ones
 function getLocalIPAddress() {
   const interfaces = os.networkInterfaces();
+  let fallbackIP = 'localhost';
+  
+  // Sort interfaces so physical-sounding ones are processed first
+  const interfaceNames = Object.keys(interfaces).sort((a, b) => {
+    const aLower = a.toLowerCase();
+    const bLower = b.toLowerCase();
+    
+    // Prioritize Wi-Fi/WLAN and Ethernet
+    const aPri = (aLower.includes('wi-fi') || aLower.includes('wlan') || aLower.includes('ethernet') || aLower.includes('local area')) ? 1 : 0;
+    const bPri = (bLower.includes('wi-fi') || bLower.includes('wlan') || bLower.includes('ethernet') || bLower.includes('local area')) ? 1 : 0;
+    
+    return bPri - aPri;
+  });
+
+  for (const interfaceName of interfaceNames) {
+    const nameLower = interfaceName.toLowerCase();
+    
+    // Ignore known virtual/internal networks
+    if (nameLower.includes('virtual') || 
+        nameLower.includes('vbox') || 
+        nameLower.includes('vmware') || 
+        nameLower.includes('wsl') || 
+        nameLower.includes('vethernet') || 
+        nameLower.includes('host-only') ||
+        nameLower.includes('loopback')) {
+      continue;
+    }
+    
+    const networkInterface = interfaces[interfaceName];
+    for (const ipInfo of networkInterface) {
+      if (ipInfo.family === 'IPv4' && !ipInfo.internal) {
+        return ipInfo.address; // Return the first matching physical IP
+      }
+    }
+  }
+  
+  // If no physical interface matches, try any non-internal IPv4
   for (const interfaceName in interfaces) {
     const networkInterface = interfaces[interfaceName];
     for (const ipInfo of networkInterface) {
@@ -93,7 +148,8 @@ function getLocalIPAddress() {
       }
     }
   }
-  return 'localhost';
+  
+  return fallbackIP;
 }
 
 let activeRoomId = null;
@@ -113,16 +169,16 @@ io.on('connection', (socket) => {
     }
     socket.join(targetRoomId);
     activeRoomId = targetRoomId;
-    rooms[targetRoomId] = rooms[targetRoomId] || { players: [], queue: [], gameActive: false };
+    rooms[targetRoomId] = rooms[targetRoomId] || { players: [], queue: [], gameActive: false, playerCount: 1 };
     const currentIP = getLocalIPAddress();
-    const connectionURL = tunnelURL ? tunnelURL : `http://${currentIP}:${PORT}`;
+    const connectionURL = tunnelURL ? tunnelURL : `http://${currentIP}:${global.serverPort}`;
     console.log(`Game Display created/joined room: ${targetRoomId}. Active room set to: ${activeRoomId}`);
     
     // Notify the game display of the final assigned room code
     socket.emit('room-connected', { roomId: targetRoomId });
 
     // Send IP and server connection info to the laptop display
-    socket.emit('server-info', { localIP: currentIP, port: PORT, connectionURL });
+    socket.emit('server-info', { localIP: currentIP, port: global.serverPort, connectionURL });
 
     // Sync any existing players in case of page reload
     socket.emit('lobby-update', { 
@@ -172,7 +228,7 @@ io.on('connection', (socket) => {
       r.players.push(newPlayer);
       
       console.log(`Player '${playerName}' joined room ${roomId} as slot ${slot}`);
-      socket.emit('join-result', { status: 'joined', slot, playerName });
+      socket.emit('join-result', { status: 'joined', slot, playerName, playerCount: r.playerCount || 1 });
       
       // If game is active, transition controller to active screen immediately
       if (r.gameActive) {
@@ -240,7 +296,7 @@ io.on('connection', (socket) => {
     // Check if ready conditions are met to start the game
     const pc = r.playerCount || 1;
     if (pc === 1) {
-      if (r.players.length >= 1 && r.players[0].ready) {
+      if (r.players.length >= 1 && r.players.some(p => p.ready)) {
         r.gameActive = true;
         console.log(`1-Player start condition met. Starting game in room ${roomId}...`);
         io.to(roomId).emit('game-started');
@@ -402,11 +458,34 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  const startupIP = getLocalIPAddress();
-  console.log(`\n======================================================`);
-  console.log(`Fruit Ninja local HTTP server is running!`);
-  console.log(`Laptop Game Display URL: http://localhost:${PORT}`);
-  console.log(`WiFi address (phone controller): http://${startupIP}:${PORT}/controller`);
-  console.log(`======================================================\n`);
-});
+function startServer(portToTry) {
+  server.listen(portToTry, '0.0.0.0', () => {
+    global.serverPort = portToTry;
+    
+    // Start Cloudflare Tunnel once port is bound successfully
+    startTunnel(portToTry);
+
+    const startupIP = getLocalIPAddress();
+    console.log(`\n======================================================`);
+    console.log(`Fruit Ninja local HTTP server is running!`);
+    console.log(`Laptop Game Display URL: http://localhost:${portToTry}`);
+    console.log(`WiFi address (phone controller): http://${startupIP}:${portToTry}/controller`);
+    console.log(`======================================================\n`);
+
+    if (global.onServerListening) {
+      global.onServerListening(portToTry);
+    }
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${portToTry} is busy, trying port ${portToTry + 1}...`);
+      startServer(portToTry + 1);
+    } else {
+      console.error(`Server error:`, err);
+    }
+  });
+}
+
+const START_PORT = 3000;
+startServer(START_PORT);
