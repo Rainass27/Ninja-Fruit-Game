@@ -64,36 +64,13 @@
     }
 
     .main-container {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      width: 95vw;
-      height: 90vh;
-      background: rgba(16, 16, 24, 0.3);
-      border: 1px solid var(--glass-border);
-      border-radius: 32px;
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 
-                  0 0 50px rgba(0, 242, 254, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
       position: relative;
-    }
-
-    @media (max-width: 900px) {
-      .main-container {
-        grid-template-columns: 1fr;
-      }
-      .promo-panel {
-        display: none;
-      }
-    }
-
-    .promo-panel {
-      background-image: url('/cover.png');
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color: #08080c; /* Matches the dark mockup background */
-      height: 100%;
-      border-right: 1px solid var(--glass-border);
     }
 
     .lobby-panel {
@@ -103,9 +80,15 @@
       justify-content: space-between;
       align-items: center;
       background: var(--glass-bg);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 
+                  0 0 40px rgba(0, 242, 254, 0.15);
       overflow-y: auto;
-      height: 100%;
+      max-height: 95vh;
       text-align: center;
     }
 
@@ -456,9 +439,6 @@
   </div>
 
   <div class="main-container">
-    <!-- Left Side: Mockup Image -->
-    <div class="promo-panel"></div>
-
     <!-- Right Side: Dynamic Lobby Config -->
     <div class="lobby-panel">
       <div>
