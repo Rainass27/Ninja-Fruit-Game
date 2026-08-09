@@ -18,7 +18,7 @@ if (urlRoom) {
 const socketUrl = window.location.hostname.includes('vercel.app')
   ? 'https://fruit-ninja-backend-6muu.onrender.com'
   : '';
-socket = io(socketUrl, { transports: ['websocket'] });
+socket = io(socketUrl, { transports: ['polling', 'websocket'] });
 
 socket.on('connect', () => {
   console.log("Scanner connected to Socket.IO server");

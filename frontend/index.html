@@ -337,6 +337,24 @@
     </div>
   </div>
 
+  <!-- Force unregister old Service Workers and clear caches -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister().then(function() {
+            console.log("Old Service Worker unregistered successfully.");
+          });
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (let name of names) caches.delete(name);
+      });
+    }
+  </script>
+
   <!-- Lobby pairing logic -->
   <script src="/lobby.js"></script>
 </body>

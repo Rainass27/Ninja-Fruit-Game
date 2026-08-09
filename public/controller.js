@@ -10,7 +10,7 @@ if (roomId) {
 const socketUrl = window.location.hostname.includes('vercel.app')
   ? 'https://fruit-ninja-backend-6muu.onrender.com'
   : '';
-const socket = io(socketUrl, { transports: ['websocket'] });
+const socket = io(socketUrl, { transports: ['polling', 'websocket'] });
 
 // UI Screen Elements
 const permissionScreen = document.getElementById('permission-screen');

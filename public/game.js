@@ -315,7 +315,7 @@ function initSocketConnection() {
   const socketUrl = window.location.hostname.includes('vercel.app')
     ? 'https://fruit-ninja-backend-6muu.onrender.com'
     : '';
-  socket = io(socketUrl, { transports: ['websocket'] });
+  socket = io(socketUrl, { transports: ['polling', 'websocket'] });
 
   // Use URL room parameter or empty string for auto-coupling
   roomId = urlRoom ? urlRoom.toUpperCase() : '';
