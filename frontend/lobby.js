@@ -114,6 +114,15 @@ function setPlayerCount(count) {
   socket.emit('set-lobby-mode', { roomId, playerCount: count });
 }
 
+// Selects mode from full-screen landing overlay and transitions to QR connection screen
+function selectGameMode(count) {
+  setPlayerCount(count);
+  const landingScreen = document.getElementById('landing-screen');
+  if (landingScreen) {
+    landingScreen.classList.add('hidden');
+  }
+}
+
 // Redirects or opens game screen in a new window
 function openGameWindow() {
   window.open(`/game?room=${roomId}`, '_blank');
