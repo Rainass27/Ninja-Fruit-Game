@@ -28,6 +28,7 @@ echo.
 echo 3. Pushing changes to GitHub (git push)...
 git push -u origin main --force
 git push -u origin main:master --force
+git push -u origin main:kiosk --force
 echo.
 
 if %errorlevel% equ 0 (
