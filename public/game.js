@@ -256,8 +256,6 @@ function draw() {
   // Motion blur trails for the background (strictly black backdrop)
   background(0, 60);
 
-
-
   // Screen shake translation
   if (screenShake > 0) {
     let dx = random(-screenShake, screenShake);
@@ -303,35 +301,6 @@ function windowResized() {
 function drawGrid() {
 }
 
-// Draw giant low-opacity name watermarks on the background of each side
-function drawBackgroundWatermarks() {
-  if (gameState !== 'PLAYING') return;
-
-  push();
-  textAlign(CENTER, CENTER);
-  textFont('Outfit');
-  textStyle(BOLD);
-  noStroke();
-
-  if (playerCount === 1) {
-    // Single player: draw a subtle name watermark in center
-    fill(0, 242, 254, 15); // cyan, 6% opacity
-    textSize(width * 0.07);
-    text(p1Name, width / 2, height / 2);
-  } else if (playerCount === 2) {
-    // Player 1 (Left Half)
-    fill(0, 242, 254, 18); // cyan, 7% opacity
-    textSize(width * 0.055);
-    text(p1Name, width / 4, height / 2);
-
-    // Player 2 (Right Half)
-    fill(255, 0, 127, 18); // pink, 7% opacity
-    textSize(width * 0.055);
-    text(p2Name, width * 3 / 4, height / 2);
-  }
-  pop();
-}
-
 // Set Game Mode selected in UI
 function setGameMode(mode) {
   gameMode = mode;
@@ -343,7 +312,10 @@ const urlRoom = urlParams.get('room');
 
 // Initialize Socket.IO Client
 function initSocketConnection() {
-  socket = io({ transports: ['websocket'] });
+  const socketUrl = window.location.hostname.includes('vercel.app')
+    ? 'https://fruit-ninja-backend-6muu.onrender.com'
+    : '';
+  socket = io(socketUrl, { transports: ['websocket'] });
 
   // Use URL room parameter or empty string for auto-coupling
   roomId = urlRoom ? urlRoom.toUpperCase() : '';

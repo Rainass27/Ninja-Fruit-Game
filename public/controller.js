@@ -7,7 +7,10 @@ if (roomId) {
   if (roomCodeTag) roomCodeTag.innerText = roomId.toUpperCase();
 }
 
-const socket = io({ transports: ['websocket'] });
+const socketUrl = window.location.hostname.includes('vercel.app')
+  ? 'https://fruit-ninja-backend-6muu.onrender.com'
+  : '';
+const socket = io(socketUrl, { transports: ['websocket'] });
 
 // UI Screen Elements
 const permissionScreen = document.getElementById('permission-screen');
@@ -44,9 +47,9 @@ const SWING_COOLDOWN_MS = 250; // cooldown between registered slashes
 let myName = '';
 let mySlot = null;
 
+// Screen visibility manager
 function showScreen(screenId) {
   const screens = [
-    'room-entry-screen',
     'name-entry-screen',
     'lobby-screen',
     'queue-screen',
@@ -102,7 +105,7 @@ socket.on('room-joined', (data) => {
 
 // Handle Lobby and Queuing enrollment results
 socket.on('join-result', (data) => {
-  const { status, slot, position, playerName, playerCount } = data;
+  const { status, slot, position, playerName } = data;
   if (status === 'joined' || status === 'promoted') {
     mySlot = slot;
     const readyBtn = document.getElementById('btn-ready');
@@ -112,11 +115,7 @@ socket.on('join-result', (data) => {
     }
     const lobbyStatus = document.getElementById('lobby-status-text');
     if (lobbyStatus) {
-      if (playerCount === 1) {
-        lobbyStatus.innerText = `Welcome, ${playerName}! You are Player ${slot}. Click Start Game to begin.`;
-      } else {
-        lobbyStatus.innerText = `Welcome, ${playerName}! You are Player ${slot}. Waiting for Player 2 to join...`;
-      }
+      lobbyStatus.innerText = `Welcome, ${playerName}! You are Player ${slot}. Waiting for both players to enter names...`;
     }
     const lobbyRoom = document.getElementById('lobby-room-code');
     if (lobbyRoom) {
@@ -314,12 +313,7 @@ async function enableSensors() {
 
   if (motionGranted && orientGranted) {
     if (permissionScreen) permissionScreen.classList.add('hidden');
-    
-    if (roomId) {
-      showScreen('name-entry-screen');
-    } else {
-      showScreen('room-entry-screen');
-    }
+    showScreen('name-entry-screen');
     
     // Bind listeners
     window.addEventListener('devicemotion', handleMotion, true);
@@ -330,26 +324,6 @@ async function enableSensors() {
   } else {
     alert("Motion and orientation permissions are required to use your phone as a sword!");
   }
-}
-
-// Submit Room Code to Server (Alternative Connection)
-function submitRoomCode() {
-  const roomInput = document.getElementById('room-code-input');
-  if (!roomInput) return;
-  const code = roomInput.value.toUpperCase().trim();
-  if (!code || code.length !== 4) {
-    alert("Please enter a valid 4-letter Room ID!");
-    return;
-  }
-  roomId = code;
-  socket.emit('join-room', roomId);
-  if (connStatusDot) connStatusDot.classList.add('connected');
-  if (connStatusText) {
-    connStatusText.innerText = "Connected";
-    connStatusText.style.color = "var(--success-neon)";
-  }
-  if (roomCodeTag) roomCodeTag.innerText = roomId;
-  showScreen('name-entry-screen');
 }
 
 // Submit Name to Server

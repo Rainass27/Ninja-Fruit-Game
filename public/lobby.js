@@ -14,14 +14,15 @@ if (urlRoom) {
   window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
-// Connect to Socket.IO
-socket = io({ transports: ['websocket'] });
+// Connect to Socket.IO (route to Render backend if on Vercel)
+const socketUrl = window.location.hostname.includes('vercel.app')
+  ? 'https://fruit-ninja-backend-6muu.onrender.com'
+  : '';
+socket = io(socketUrl, { transports: ['websocket'] });
 
 socket.on('connect', () => {
   console.log("Scanner connected to Socket.IO server");
   socket.emit('create-room', roomId);
-  // Sync initial player count mode on connect
-  socket.emit('set-lobby-mode', { roomId, playerCount });
 });
 
 socket.on('server-info', (data) => {
@@ -35,7 +36,12 @@ socket.on('tunnel-status', (data) => {
 });
 
 function updateQR(baseUrl) {
-  const controllerURL = `${baseUrl}/controller?room=${roomId}`;
+  let finalBaseUrl = baseUrl;
+  // If running on Vercel, route the phone controller to Vercel
+  if (window.location.hostname.includes('vercel.app')) {
+    finalBaseUrl = window.location.origin;
+  }
+  const controllerURL = `${finalBaseUrl}/controller?room=${roomId}`;
   document.getElementById('connect-link').innerText = controllerURL;
   
   // Clear previous QR code

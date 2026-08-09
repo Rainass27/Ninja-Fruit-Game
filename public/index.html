@@ -10,8 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
   <!-- Socket.IO client library -->
   <script src="/socket.io/socket.io.js"></script>
-  <!-- QRCode.js Library loaded locally -->
-  <script src="/qrcode.min.js"></script>
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   
   <style>
     :root {
@@ -63,47 +63,54 @@
       pointer-events: none;
     }
 
-    /* Glassmorphism overlays */
-    .overlay {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-      overflow-y: auto;
-      padding: 40px 15px;
-    }
-
-    .modal {
-      background: var(--glass-bg);
+    .main-container {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      width: 95vw;
+      height: 90vh;
+      background: rgba(16, 16, 24, 0.3);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 40px;
-      width: 90%;
-      max-width: 750px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 
-                  0 0 40px rgba(0, 242, 254, 0.15);
-      text-align: center;
+      border-radius: 32px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 
+                  0 0 50px rgba(0, 242, 254, 0.1);
+      overflow: hidden;
       position: relative;
-      margin: auto;
     }
 
-    .modal::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(135deg, var(--primary-neon), var(--accent-neon));
-      border-radius: 26px;
-      z-index: -1;
-      opacity: 0.2;
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      .promo-panel {
+        display: none;
+      }
+    }
+
+    .promo-panel {
+      background-image: url('/cover.png');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #08080c; /* Matches the dark mockup background */
+      height: 100%;
+      border-right: 1px solid var(--glass-border);
+    }
+
+    .lobby-panel {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      overflow-y: auto;
+      height: 100%;
+      text-align: center;
     }
 
     h1.title {
-      font-size: 3.5rem;
+      font-size: 3rem;
       font-weight: 800;
       letter-spacing: 2px;
       background: linear-gradient(135deg, #fff 30%, var(--primary-neon) 70%, var(--accent-neon));
@@ -116,23 +123,9 @@
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 1.1rem;
+      font-size: 1rem;
       margin-bottom: 30px;
       font-weight: 300;
-    }
-
-    .setup-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    @media (max-width: 600px) {
-      .setup-grid {
-        grid-template-columns: 1fr;
-      }
     }
 
     .qr-section {
@@ -144,6 +137,9 @@
       border: 1px solid var(--glass-border);
       border-radius: 16px;
       padding: 20px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 25px;
     }
 
     .qr-placeholder {
@@ -160,9 +156,10 @@
 
     .qr-text {
       margin-top: 15px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-main);
       word-break: break-all;
+      line-height: 1.4;
     }
 
     .ip-address {
@@ -175,51 +172,14 @@
       margin-top: 5px;
     }
 
-    .info-section {
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .step-box {
-      display: flex;
-      gap: 15px;
-      align-items: flex-start;
-    }
-
-    .step-num {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
-      color: #000;
-      font-weight: 800;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-shrink: 0;
-      box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
-    }
-
-    .step-desc h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--text-main);
-    }
-
-    .step-desc p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
     /* Game Mode Options */
     .mode-select {
       display: flex;
       gap: 15px;
       margin-top: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 25px;
     }
 
     .mode-btn {
@@ -259,16 +219,18 @@
     }
 
     .connection-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 1rem;
-      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      max-width: 320px;
+      border-radius: 16px;
+      padding: 15px;
+      align-items: stretch;
+      text-align: left;
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--glass-border);
+      margin-bottom: 20px;
     }
 
     .status-dot {
@@ -291,7 +253,6 @@
     }
 
     .start-game-btn {
-      margin-top: 20px;
       background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
       border: none;
       border-radius: 12px;
@@ -305,6 +266,8 @@
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
       transition: all 0.3s ease;
+      width: 100%;
+      max-width: 320px;
     }
 
     .start-game-btn:hover {
@@ -319,65 +282,45 @@
 </head>
 <body>
 
-  <!-- Pairing / Menu Screen -->
-  <div id="pairing-overlay" class="overlay">
-    <div class="modal">
-      <h1 class="title">Neon Ninja</h1>
-      <p class="subtitle">WiFi Motion-Controlled Sword Slicing Game</p>
+  <div class="main-container">
+    <!-- Left Side: Mockup Image -->
+    <div class="promo-panel"></div>
 
-      <div class="setup-grid">
-        <!-- Step 1: Scan and Connect -->
-        <div class="qr-section">
-          <div class="qr-placeholder" id="qr-code">
-            <!-- QR code generated here -->
-          </div>
-          <div class="qr-text">
-            Connect phone to local WiFi, scan QR or go to:<br>
-            <span class="ip-address" id="connect-link">Finding server IP...</span>
-          </div>
+    <!-- Right Side: Dynamic Lobby Config -->
+    <div class="lobby-panel">
+      <div>
+        <h1 class="title">Neon Ninja</h1>
+        <p class="subtitle">WiFi Motion-Controlled Slicing Game</p>
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="mode-select">
+        <button class="mode-btn active" id="mode-1player" onclick="setPlayerCount(1)">
+          1 Player
+          <span class="mode-desc">Single Sword</span>
+        </button>
+        <button class="mode-btn" id="mode-2player" onclick="setPlayerCount(2)">
+          2 Players
+          <span class="mode-desc">Split-Screen Duel</span>
+        </button>
+      </div>
+
+      <!-- Scan QR section -->
+      <div class="qr-section">
+        <div class="qr-placeholder" id="qr-code">
+          <!-- QR code generated here -->
         </div>
-
-        <!-- Step 2: Instructions and Modes -->
-        <div class="info-section">
-          <div class="step-box">
-            <span class="step-num">1</span>
-            <div class="step-desc">
-              <h3>Connect Your Phone</h3>
-              <p>Scan the QR code. Point your phone at the laptop screen, tap <strong>Activate</strong>, and hold your phone vertically like a sword handle.</p>
-            </div>
-          </div>
-
-          <div class="step-box">
-            <span class="step-num">2</span>
-            <div class="step-desc">
-              <h3>Configure Players</h3>
-              <div class="mode-select">
-                <button class="mode-btn active" id="mode-1player" onclick="setPlayerCount(1)">
-                  1 Player
-                  <span class="mode-desc">Single Sword</span>
-                </button>
-                <button class="mode-btn" id="mode-2player" onclick="setPlayerCount(2)">
-                  2 Players
-                  <span class="mode-desc">Split-Screen Duel</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="step-box">
-            <span class="step-num">3</span>
-            <div class="step-desc">
-              <h3>Swing to Slash!</h3>
-              <p>Wait for game start. Move phone vertically/horizontally. A neon sword slash will appear, cutting fruits in its path.</p>
-            </div>
-          </div>
+        <div class="qr-text">
+          Connect phone to local WiFi, scan QR or go to:<br>
+          <span class="ip-address" id="connect-link">Finding server IP...</span>
         </div>
       </div>
 
-      <div class="connection-status" id="connection-status-box" style="flex-direction: column; gap: 8px; width: 100%; border-radius: 16px; padding: 15px; align-items: stretch; text-align: left;">
+      <!-- Connection roster -->
+      <div class="connection-status" id="connection-status-box">
         <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 4px;">
           <span class="status-dot" id="connection-status-dot"></span>
-          <span id="connection-status-text">Waiting for players to connect...</span>
+          <span id="connection-status-text">Waiting for players...</span>
         </div>
         <div id="player-lobby-list" style="display: flex; flex-direction: column; gap: 6px;">
           <div style="color: var(--text-muted); font-size: 0.9rem;">No players joined yet.</div>
@@ -387,7 +330,8 @@
         </div>
       </div>
 
-      <div style="margin-top: 15px;">
+      <!-- Open Game Tab Button -->
+      <div>
         <button id="open-game-btn" class="start-game-btn" onclick="openGameWindow()">Open Game Screen</button>
       </div>
     </div>
