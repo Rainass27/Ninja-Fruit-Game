@@ -9,10 +9,9 @@ echo.
 echo 1. DEPLOYING FRONTEND (Ninja-Fruit-Game)...
 echo ------------------------------------------------------
 git add .
-git commit -m "Update WebSocket URL and layout on Vercel"
+git commit -m "Production update: Desktop application frontend"
 git push -u origin master --force
 git push -u origin master:main --force
-git push -u origin master:kiosk --force
 echo.
 
 echo 2. DEPLOYING BACKEND (Fruit-Ninja-backend)...
