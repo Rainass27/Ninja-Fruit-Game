@@ -26,6 +26,7 @@ git commit -m "Fix production Vercel socket connections and update lobby mockup 
 echo.
 
 echo 3. Pushing changes to GitHub (git push)...
+git push -u origin main --force
 git push -u origin main:master --force
 echo.
 
