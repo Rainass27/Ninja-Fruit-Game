@@ -312,22 +312,23 @@ async function enableSensors() {
   }
 
   if (motionGranted && orientGranted) {
-    if (permissionScreen) permissionScreen.classList.add('hidden');
-    showScreen('name-entry-screen');
-    
     // Bind listeners
+    window.removeEventListener('devicemotion', handleMotion, true);
     window.addEventListener('devicemotion', handleMotion, true);
+    window.removeEventListener('deviceorientation', handleOrientation, true);
     window.addEventListener('deviceorientation', handleOrientation, true);
     
-    // Start continuous transmission loop (~40 fps / every 25ms)
-    setInterval(sendSensorData, 25);
+    // Start continuous transmission loop (~40 fps / every 25ms) if not already active
+    if (!window.sensorInterval) {
+      window.sensorInterval = setInterval(sendSensorData, 25);
+    }
   } else {
-    alert("Motion and orientation permissions are required to use your phone as a sword!");
+    console.warn("Sensor permissions not fully granted.");
   }
 }
 
 // Submit Name to Server
-function submitName() {
+async function submitName() {
   const nameInput = document.getElementById('ninja-name-input');
   if (!nameInput) return;
   const name = nameInput.value.trim();
@@ -336,6 +337,10 @@ function submitName() {
     return;
   }
   myName = name;
+  
+  // Prompt sensors on user click of "Join Lobby" (iOS user gesture requirement met)
+  await enableSensors();
+  
   socket.emit('join-game', { roomId, playerName: name });
 }
 
