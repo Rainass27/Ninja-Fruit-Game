@@ -313,7 +313,7 @@ const urlRoom = urlParams.get('room');
 // Initialize Socket.IO Client
 function initSocketConnection() {
   const socketUrl = window.location.hostname.includes('vercel.app')
-    ? 'https://ninja-fruit-game-1.onrender.com'
+    ? 'https://fruit-ninja-backend-6muu.onrender.com'
     : '';
   socket = io(socketUrl, { transports: ['websocket'] });
 

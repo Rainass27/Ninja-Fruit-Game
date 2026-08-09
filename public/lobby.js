@@ -16,7 +16,7 @@ if (urlRoom) {
 
 // Connect to Socket.IO (route to Render backend if on Vercel)
 const socketUrl = window.location.hostname.includes('vercel.app')
-  ? 'https://ninja-fruit-game-1.onrender.com'
+  ? 'https://fruit-ninja-backend-6muu.onrender.com'
   : '';
 socket = io(socketUrl, { transports: ['websocket'] });
 
