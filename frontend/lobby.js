@@ -35,6 +35,12 @@ socket.on('tunnel-status', (data) => {
   }
 });
 
+// Auto-transition laptop display to game canvas once phone starts the game
+socket.on('game-started', () => {
+  console.log("Game started by controller! Transitioning screen...");
+  window.location.href = `/game?room=${roomId}`;
+});
+
 function updateQR(baseUrl) {
   let finalBaseUrl = baseUrl;
   // If running on Vercel, route the phone controller to Vercel

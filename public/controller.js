@@ -189,6 +189,32 @@ socket.on('lobby-update', (data) => {
       }
     }
   }
+
+  // Show/hide Play Solo option and toggle ready button when alone in a 2-Player lobby
+  const playSoloBtn = document.getElementById('btn-play-solo');
+  const readyBtn = document.getElementById('btn-ready');
+  if (serverPlayerCount === 2 && players.length === 1) {
+    if (playSoloBtn) playSoloBtn.style.display = 'inline-block';
+    if (readyBtn) {
+      readyBtn.disabled = true;
+      readyBtn.innerText = "Waiting for Player 2...";
+      readyBtn.style.opacity = '0.5';
+    }
+  } else {
+    if (playSoloBtn) playSoloBtn.style.display = 'none';
+    if (readyBtn) {
+      const myInfo = players.find(p => p.socketId === socket.id);
+      if (myInfo && myInfo.ready) {
+        readyBtn.disabled = true;
+        readyBtn.innerText = "Ready!";
+        readyBtn.style.opacity = '0.7';
+      } else {
+        readyBtn.disabled = false;
+        readyBtn.innerText = "Start Game";
+        readyBtn.style.opacity = '1';
+      }
+    }
+  }
 });
 
 // Handle game start notification
@@ -361,6 +387,13 @@ function clickReady() {
     if (navigator.vibrate) {
       navigator.vibrate([60, 40]);
     }
+  }
+}
+
+// Switches from 2-Player mode to Solo mode when waiting alone
+function switchToSolo() {
+  if (roomId && socket.connected) {
+    socket.emit('set-lobby-mode', { roomId, playerCount: 1 });
   }
 }
 
