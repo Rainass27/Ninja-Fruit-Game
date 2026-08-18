@@ -54,7 +54,7 @@ function updateQR(baseUrl) {
   document.getElementById('qr-code').innerHTML = '';
   
 // Fade out splash screen overlay after 2.5 seconds loading simulation
-window.addEventListener('DOMContentLoaded', () => {
+function hideSplash() {
   const splash = document.getElementById('splash-screen');
   setTimeout(() => {
     if (splash) {
@@ -64,7 +64,13 @@ window.addEventListener('DOMContentLoaded', () => {
       }, 500);
     }
   }, 2500);
-});
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', hideSplash);
+} else {
+  hideSplash();
+}
 
   // Generate QR Code
   new QRCode(document.getElementById("qr-code"), {
