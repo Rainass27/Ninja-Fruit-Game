@@ -53,11 +53,24 @@ function updateQR(baseUrl) {
   // Clear previous QR code
   document.getElementById('qr-code').innerHTML = '';
   
+// Fade out splash screen overlay after 2.5 seconds loading simulation
+window.addEventListener('DOMContentLoaded', () => {
+  const splash = document.getElementById('splash-screen');
+  setTimeout(() => {
+    if (splash) {
+      splash.classList.add('fade-out');
+      setTimeout(() => {
+        splash.style.display = 'none';
+      }, 500);
+    }
+  }, 2500);
+});
+
   // Generate QR Code
   new QRCode(document.getElementById("qr-code"), {
     text: controllerURL,
-    width: 180,
-    height: 180,
+    width: 220,
+    height: 220,
     colorDark : "#08080c",
     colorLight : "#ffffff",
     correctLevel : QRCode.CorrectLevel.H
@@ -68,13 +81,6 @@ function updateQR(baseUrl) {
 socket.on('lobby-update', (data) => {
   playersJoined = data.players;
   const queueLength = data.queueLength;
-  
-  // Update Player count selector if synced from server
-  if (data.playerCount && data.playerCount !== playerCount) {
-    playerCount = data.playerCount;
-    document.getElementById('mode-1player').classList.toggle('active', playerCount === 1);
-    document.getElementById('mode-2player').classList.toggle('active', playerCount === 2);
-  }
 
   // Update lobby roster UI
   const listEl = document.getElementById('player-lobby-list');

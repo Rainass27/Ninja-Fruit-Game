@@ -136,15 +136,13 @@ socket.on('join-result', (data) => {
 socket.on('lobby-update', (data) => {
   const { players } = data;
   
-  let serverPlayerCount = data.playerCount || 1;
-  
   const listEl = document.getElementById('lobby-players-list');
   if (listEl) {
     listEl.innerHTML = '';
     players.forEach(p => {
       const isMe = p.socketId === socket.id;
       const meTag = isMe ? ' (You)' : '';
-      const slotColor = p.slot === 1 ? 'var(--primary-neon)' : 'var(--accent-neon)';
+      const slotColor = 'var(--primary-neon)';
       const readyColor = p.ready ? 'var(--success-neon)' : 'var(--accent-neon)';
       const readyText = p.ready ? 'READY' : 'NOT READY';
       
@@ -163,56 +161,25 @@ socket.on('lobby-update', (data) => {
     const myInfo = players.find(p => p.socketId === socket.id);
     if (myInfo) {
       if (myInfo.ready) {
-        if (serverPlayerCount === 1) {
-          lobbyStatus.innerText = "Ready! Starting game...";
-        } else {
-          const otherPlayer = players.find(p => p.socketId !== socket.id);
-          if (!otherPlayer) {
-            lobbyStatus.innerText = "Ready! Waiting for Player 2 to join...";
-          } else if (!otherPlayer.ready) {
-            lobbyStatus.innerText = `Ready! Waiting for ${otherPlayer.name} to click start...`;
-          } else {
-            lobbyStatus.innerText = "All players ready! Starting game...";
-          }
-        }
+        lobbyStatus.innerText = "Ready! Starting game...";
       } else {
-        if (serverPlayerCount === 1) {
-          lobbyStatus.innerText = "You are connected! Click Start Game to begin.";
-        } else {
-          const otherPlayer = players.find(p => p.socketId !== socket.id);
-          if (!otherPlayer) {
-            lobbyStatus.innerText = "Waiting for Player 2 to join...";
-          } else {
-            lobbyStatus.innerText = `${otherPlayer.name} is in lobby. Click Start Game to play.`;
-          }
-        }
+        lobbyStatus.innerText = "You are connected! Click Start Game to begin.";
       }
     }
   }
 
-  // Show/hide Play Solo option and toggle ready button when alone in a 2-Player lobby
-  const playSoloBtn = document.getElementById('btn-play-solo');
+  // Ready button states
   const readyBtn = document.getElementById('btn-ready');
-  if (serverPlayerCount === 2 && players.length === 1) {
-    if (playSoloBtn) playSoloBtn.style.display = 'inline-block';
-    if (readyBtn) {
+  if (readyBtn) {
+    const myInfo = players.find(p => p.socketId === socket.id);
+    if (myInfo && myInfo.ready) {
       readyBtn.disabled = true;
-      readyBtn.innerText = "Waiting for Player 2...";
-      readyBtn.style.opacity = '0.5';
-    }
-  } else {
-    if (playSoloBtn) playSoloBtn.style.display = 'none';
-    if (readyBtn) {
-      const myInfo = players.find(p => p.socketId === socket.id);
-      if (myInfo && myInfo.ready) {
-        readyBtn.disabled = true;
-        readyBtn.innerText = "Ready!";
-        readyBtn.style.opacity = '0.7';
-      } else {
-        readyBtn.disabled = false;
-        readyBtn.innerText = "Start Game";
-        readyBtn.style.opacity = '1';
-      }
+      readyBtn.innerText = "Ready!";
+      readyBtn.style.opacity = '0.7';
+    } else {
+      readyBtn.disabled = false;
+      readyBtn.innerText = "Start Game";
+      readyBtn.style.opacity = '1';
     }
   }
 });
@@ -387,13 +354,6 @@ function clickReady() {
     if (navigator.vibrate) {
       navigator.vibrate([60, 40]);
     }
-  }
-}
-
-// Switches from 2-Player mode to Solo mode when waiting alone
-function switchToSolo() {
-  if (roomId && socket.connected) {
-    socket.emit('set-lobby-mode', { roomId, playerCount: 1 });
   }
 }
 

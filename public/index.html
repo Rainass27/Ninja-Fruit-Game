@@ -74,28 +74,25 @@
     }
 
     .lobby-panel {
-      padding: 40px;
+      width: 100%;
+      height: 100%;
+      max-width: 1100px;
+      padding: 40px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      background: var(--glass-bg);
-      backdrop-filter: blur(15px);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 
-                  0 0 40px rgba(0, 242, 254, 0.15);
-      overflow-y: auto;
-      max-height: 95vh;
-      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .lobby-header {
+      margin-bottom: 20px;
     }
 
     h1.title {
-      font-size: 3rem;
+      font-size: 4rem;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 4px;
       background: linear-gradient(135deg, #fff 30%, var(--primary-neon) 70%, var(--accent-neon));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -106,43 +103,50 @@
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 1rem;
-      margin-bottom: 30px;
+      font-size: 1.25rem;
       font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    /* Two-column layout */
+    .lobby-content-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 60px;
+      width: 100%;
+      margin: auto 0;
     }
 
     .qr-section {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 20px;
-      width: 100%;
-      max-width: 320px;
-      margin-bottom: 25px;
+      width: 380px;
     }
 
     .qr-placeholder {
-      width: 180px;
-      height: 180px;
+      width: 220px;
+      height: 220px;
       background: white;
-      border-radius: 12px;
-      padding: 10px;
+      border-radius: 16px;
+      padding: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
     }
 
     .qr-text {
-      margin-top: 15px;
-      font-size: 0.85rem;
+      margin-top: 20px;
+      font-size: 0.95rem;
       color: var(--text-main);
-      word-break: break-all;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .ip-address {
@@ -152,68 +156,72 @@
       padding: 4px 8px;
       border-radius: 6px;
       display: inline-block;
-      margin-top: 5px;
+      margin-top: 8px;
     }
 
-    /* Game Mode Options */
-    .mode-select {
+    .steps-section {
       display: flex;
-      gap: 15px;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 320px;
-      margin-bottom: 25px;
+      flex-direction: column;
+      gap: 25px;
+      max-width: 500px;
+      text-align: left;
     }
 
-    .mode-btn {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.03);
+    .step-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 12px;
-      cursor: pointer;
-      color: var(--text-muted);
-      font-family: inherit;
+      border-radius: 20px;
+      padding: 20px 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .step-num {
+      background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+      color: #000;
+      font-size: 1.5rem;
+      font-weight: 800;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    }
+
+    .step-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-info p {
       font-size: 0.95rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .lobby-footer {
+      margin-top: 20px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-    }
-
-    .mode-btn span.mode-desc {
-      font-size: 0.75rem;
-      font-weight: 400;
-      opacity: 0.8;
-    }
-
-    .mode-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-main);
-    }
-
-    .mode-btn.active {
-      background: rgba(0, 242, 254, 0.08);
-      border-color: var(--primary-neon);
-      color: var(--primary-neon);
-      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
     }
 
     .connection-status {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
-      max-width: 320px;
-      border-radius: 16px;
-      padding: 15px;
-      align-items: stretch;
-      text-align: left;
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      margin-bottom: 20px;
+      border-radius: 16px;
+      padding: 15px 30px;
+      display: inline-block;
     }
 
     .status-dot {
@@ -262,23 +270,30 @@
       transform: translateY(1px);
     }
 
-    /* Landing Screen Overlay Styles */
-    .landing-overlay {
+    /* Splash Screen Overlay Styles */
+    .splash-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
       background: #050508;
-      z-index: 1000;
+      z-index: 2000;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      transition: opacity 0.5s ease;
+      opacity: 1;
     }
 
-    /* Cyber grid background on landing */
-    .landing-overlay::before {
+    .splash-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Cyber grid background on splash */
+    .splash-overlay::before {
       content: '';
       position: absolute;
       top: 0;
@@ -294,21 +309,8 @@
       pointer-events: none;
     }
 
-    .landing-overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .landing-content {
-      text-align: center;
-      max-width: 800px;
-      width: 100%;
-      padding: 20px;
-    }
-
-    .landing-title {
-      font-size: 4.8rem;
+    .splash-title {
+      font-size: 5rem;
       font-weight: 800;
       letter-spacing: 5px;
       background: linear-gradient(135deg, #fff, var(--primary-neon), var(--secondary-neon));
@@ -316,176 +318,115 @@
       -webkit-text-fill-color: transparent;
       text-transform: uppercase;
       text-shadow: 0 0 40px rgba(0, 242, 254, 0.35);
-      margin-bottom: 10px;
-      animation: pulse-title 2s infinite alternate;
+      margin-bottom: 5px;
+      animation: pulse-title 2.5s infinite alternate;
     }
 
-    @keyframes pulse-title {
-      from { transform: scale(0.98); opacity: 0.95; }
-      to { transform: scale(1.02); opacity: 1; }
-    }
-
-    .landing-subtitle {
+    .splash-subtitle {
       color: var(--text-muted);
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 300;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
     }
 
-    .landing-modes {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(0, 242, 254, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary-neon);
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+      margin-bottom: 25px;
     }
 
-    .landing-btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 2px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 30px 40px;
-      width: 320px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      text-align: left;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      font-family: inherit;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    .landing-btn:hover {
-      background: rgba(0, 242, 254, 0.05);
-      border-color: var(--primary-neon);
-      box-shadow: 0 0 35px rgba(0, 242, 254, 0.3);
-      transform: translateY(-8px);
-    }
-
-    .landing-btn.dual-btn:hover {
-      background: rgba(255, 0, 127, 0.05);
-      border-color: var(--accent-neon);
-      box-shadow: 0 0 35px rgba(255, 0, 127, 0.3);
-    }
-
-    .btn-icon {
-      font-size: 3.5rem;
-    }
-
-    .landing-btn:hover .btn-icon {
-      animation: bounce-icon 0.6s infinite alternate;
-    }
-
-    @keyframes bounce-icon {
-      from { transform: translateY(0); }
-      to { transform: translateY(-5px); }
-    }
-
-    .btn-text {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .btn-title {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .landing-btn:hover .btn-title {
+    .loading-text {
+      font-family: monospace;
       color: var(--primary-neon);
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+      animation: flash 1.5s infinite alternate;
     }
 
-    .landing-btn.dual-btn:hover .btn-title {
-      color: var(--accent-neon);
+    @keyframes flash {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
     }
-
-    .btn-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-  </style>
 </head>
 <body>
 
-  <!-- Landing Screen Overlay -->
-  <div id="landing-screen" class="landing-overlay">
-    <div class="landing-content">
-      <h1 class="landing-title">Neon Ninja</h1>
-      <p class="landing-subtitle">WiFi Motion-Controlled Slicing Game</p>
-      
-      <div class="landing-modes">
-        <button class="landing-btn" onclick="selectGameMode(1)">
-          <div class="btn-icon">👤</div>
-          <div class="btn-text">
-            <span class="btn-title">Solo Play</span>
-            <span class="btn-subtitle">Single Sword Action</span>
-          </div>
-        </button>
-        
-        <button class="landing-btn dual-btn" onclick="selectGameMode(2)">
-          <div class="btn-icon">👥</div>
-          <div class="btn-text">
-            <span class="btn-title">Dual Play</span>
-            <span class="btn-subtitle">Split-Screen Duel</span>
-          </div>
-        </button>
-      </div>
-    </div>
+  <!-- Splash Screen / Game Loading Overlay -->
+  <div id="splash-screen" class="splash-overlay">
+    <h1 class="splash-title">Neon Ninja</h1>
+    <p class="splash-subtitle">WiFi Motion-Controlled Slicing Game</p>
+    <div class="spinner"></div>
+    <div class="loading-text">LOADING GAME SENSORS...</div>
   </div>
 
   <div class="main-container">
     <!-- Right Side: Dynamic Lobby Config -->
     <div class="lobby-panel">
-      <div>
+      <!-- Title Header -->
+      <div class="lobby-header">
         <h1 class="title">Neon Ninja</h1>
         <p class="subtitle">WiFi Motion-Controlled Slicing Game</p>
       </div>
 
-      <!-- Mode Selector -->
-      <div class="mode-select">
-        <button class="mode-btn active" id="mode-1player" onclick="setPlayerCount(1)">
-          1 Player
-          <span class="mode-desc">Single Sword</span>
-        </button>
-        <button class="mode-btn" id="mode-2player" onclick="setPlayerCount(2)">
-          2 Players
-          <span class="mode-desc">Split-Screen Duel</span>
-        </button>
-      </div>
+      <!-- Main Config/QR Row -->
+      <div class="lobby-content-row">
+        <!-- QR Section (Left Column) -->
+        <div class="qr-section">
+          <div class="qr-placeholder" id="qr-code">
+            <!-- QR code generated here -->
+          </div>
+          <div class="qr-text">
+            Scan QR or go to:<br>
+            <span class="ip-address" id="connect-link">Finding server IP...</span>
+          </div>
+        </div>
 
-      <!-- Scan QR section -->
-      <div class="qr-section">
-        <div class="qr-placeholder" id="qr-code">
-          <!-- QR code generated here -->
-        </div>
-        <div class="qr-text">
-          Connect phone to local WiFi, scan QR or go to:<br>
-          <span class="ip-address" id="connect-link">Finding server IP...</span>
-        </div>
-      </div>
-
-      <!-- Connection roster -->
-      <div class="connection-status" id="connection-status-box">
-        <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 4px;">
-          <span class="status-dot" id="connection-status-dot"></span>
-          <span id="connection-status-text">Waiting for players...</span>
-        </div>
-        <div id="player-lobby-list" style="display: flex; flex-direction: column; gap: 6px;">
-          <div style="color: var(--text-muted); font-size: 0.9rem;">No players joined yet.</div>
-        </div>
-        <div id="lobby-queue-info" style="font-size: 0.8rem; color: var(--accent-neon); margin-top: 4px; display: none;">
-          Queue: <span id="queue-count-val">0</span> in waiting room
+        <!-- Instructions Steps (Right Column) -->
+        <div class="steps-section">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-info">
+              <h3>Connect Your Phone</h3>
+              <p>Scan the QR code or open the link. Enter your name and tap Join Lobby to begin.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-info">
+              <h3>Swing to Slash!</h3>
+              <p>Hold your phone like a sword and swing it to slash flying fruits in real-time!</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Open Game Tab Button -->
-      <div>
-        <button id="open-game-btn" class="start-game-btn" onclick="openGameWindow()">Open Game Screen</button>
+      <!-- Connection roster & Status -->
+      <div class="lobby-footer">
+        <div class="connection-status" id="connection-status-box">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; color: var(--text-muted);">
+            <span class="status-dot" id="connection-status-dot"></span>
+            <span id="connection-status-text">Waiting for players...</span>
+          </div>
+          <div id="player-lobby-list" style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px; min-width: 250px;">
+            <div style="color: var(--text-muted); font-size: 0.9rem;">No players joined yet.</div>
+          </div>
+        </div>
+
+        <!-- Open Game Tab Button -->
+        <div style="margin-top: 15px;">
+          <button id="open-game-btn" class="start-game-btn" onclick="openGameWindow()" style="width: auto; padding: 12px 30px; font-size: 0.95rem;">Open Game Screen</button>
+        </div>
       </div>
     </div>
   </div>
